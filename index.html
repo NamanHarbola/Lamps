@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Madan Store – Lamp Catalogue</title>
+<meta name="description" content="Browse Madan Store's lamps and home decor by category. Shortlist your favourites and send them to us on WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f6f3;--card:#fff;--ink:#1d2623;--mute:#6b746f;--line:#e4e2dc;--brass:#a77b1c;--deep:#22332e;--sale:#b3412c;--wa:#1f8f4a}
+@media (prefers-color-scheme:dark){:root{--bg:#141a18;--card:#1c2421;--ink:#ece9e1;--mute:#98a29c;--line:#2d3833;--brass:#d2a444;--deep:#d2a444;--sale:#e0765f}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Figtree,system-ui,sans-serif}
+[hidden]{display:none!important}
+.pvmode #nav,.pvmode #foot{display:none}
+:root{--nav:calc(60px + env(safe-area-inset-top,0px))}
+.search{max-width:1240px;margin:auto;padding:4px 14px 10px;display:flex;gap:8px}
+.search input,.search select{height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.search input{flex:1;min-width:0}
+.search select{width:42%;max-width:190px}
+.btn{min-height:44px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 16px;border-radius:10px;font:500 15px Figtree,sans-serif;cursor:pointer}
+.btn:focus-visible,input:focus-visible,select:focus-visible,.chip:focus-visible,.card:focus-visible,.heart:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.btn.primary{background:var(--deep);color:var(--bg);border-color:var(--deep)}
+.btn.on{background:var(--brass);border-color:var(--brass);color:#fff}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.cats{position:sticky;top:var(--nav);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.cats .in{max-width:1240px;margin:auto}
+.rowc{display:flex;gap:8px;overflow-x:auto;padding:8px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rowc::-webkit-scrollbar{display:none}
+.rowc.sub{padding-top:0}
+.chip{flex:none;min-height:40px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 14px;border-radius:99px;font:500 14px Figtree,sans-serif;cursor:pointer;white-space:nowrap}
+.chip small{color:var(--mute);margin-left:4px;font-size:12px}
+.chip[aria-pressed=true]{background:var(--deep);color:var(--bg);border-color:var(--deep)}
+.chip[aria-pressed=true] small{color:inherit;opacity:.75}
+.rowc.sub .chip{min-height:34px;font-size:13px;background:transparent}
+.rowc.sub .chip[aria-pressed=true]{background:var(--brass);border-color:var(--brass);color:#fff}
+main{max-width:1240px;margin:auto;padding:12px 12px calc(96px + env(safe-area-inset-bottom,0px))}
+.count{color:var(--mute);margin:0 2px 10px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}}
+@media(min-width:960px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1200px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;position:relative}
+.ph{aspect-ratio:1;background:#fff;position:relative}
+.ph img{width:100%;height:100%;object-fit:contain;display:block}
+.tag{position:absolute;left:8px;bottom:8px;background:var(--sale);color:#fff;font:600 12px Figtree;padding:2px 8px;border-radius:6px}
+.tag.out{background:#555}
+.heart{position:absolute;right:8px;top:8px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#444;font-size:21px;line-height:1;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.heart.on{background:var(--brass);color:#fff}
+.info{padding:10px 10px 12px}
+.info h3{font:500 13px/1.35 Figtree;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.price{font:600 17px Fraunces,Georgia,serif}
+.price s{font:400 12px Figtree;color:var(--mute);margin-left:6px}
+.more{display:block;margin:20px auto 0;min-width:220px}
+.msg{text-align:center;padding:50px 16px;color:var(--mute)}
+.dock{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);display:none;z-index:4}
+.dock .btn{width:100%;max-width:520px;margin:auto;display:block}
+.sh-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--line);padding-top:calc(8px + env(safe-area-inset-top,0px))}
+.sh-head b{font:600 17px Fraunces,Georgia,serif}
+.ctr{color:var(--mute);font-size:14px}
+.sh-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+.sh-foot{display:flex;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--bg)}
+.sh-foot .btn{flex:1}
+.det{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:800px){.det{grid-template-columns:1.1fr 1fr;gap:24px;padding:20px}}
+.gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;background:#fff}
+.gal::-webkit-scrollbar{display:none}
+.gal img{flex:0 0 100%;width:100%;aspect-ratio:1;object-fit:contain;scroll-snap-align:center;background:#fff}
+@media(min-width:800px){.gal{border-radius:12px}}
+.thumbs{display:flex;gap:8px;padding:10px 12px;overflow-x:auto}
+@media(min-width:800px){.thumbs{padding:10px 0}}
+.thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:2px solid transparent;flex:none;cursor:pointer;background:#fff}
+.thumbs img.cur{border-color:var(--brass)}
+.meta{padding:4px 14px 18px}
+@media(min-width:800px){.meta{padding:0}}
+.meta h2{font:600 20px/1.3 Fraunces,Georgia,serif;margin:6px 0 8px}
+.meta .price{font-size:24px}
+.meta .off{color:var(--sale);font:600 14px Figtree;margin-left:8px}
+.meta pre{white-space:pre-wrap;font:inherit;color:var(--mute);margin:14px 0 0}
+.vars{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+.vars td{padding:8px 0;border-bottom:1px solid var(--line)}
+.vars td:nth-child(2){text-align:right;font-weight:600}
+.vars td:nth-child(3){text-align:right;color:var(--sale);width:70px}
+.rows{padding:4px 14px}
+.row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.row img{width:64px;height:64px;border-radius:8px;object-fit:cover;background:#fff;flex:none}
+.row div{flex:1;font-size:14px;min-width:0}
+.row div span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.row .btn{min-height:38px;padding:0 12px;font-size:13px}
+.total{display:flex;justify-content:space-between;font:600 18px Fraunces,serif;padding:14px 14px 4px}
+
+.pv{max-width:1000px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.sh-head{position:sticky;top:0;z-index:5;background:var(--bg);gap:8px}
+.sh-head .ctr{margin-left:auto;margin-right:4px}
+.sh-body{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px));overflow:visible}
+.sh-foot{position:fixed;left:0;right:0;bottom:0;z-index:6;justify-content:center}
+.sh-foot .btn{max-width:360px}
+.det>*{min-width:0}
+.gal{width:100%;max-width:100%}
+.gal img{flex:0 0 100%;max-width:100%;max-height:62vh;height:auto}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--deep);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:20;font-size:14px}
+
+a{color:inherit}
+.wrap{max-width:1240px;margin:auto;padding:0 16px}
+.nav{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.nav-in{max-width:1240px;margin:auto;height:60px;padding:0 14px;display:flex;align-items:center;gap:10px;position:relative}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.brand img{height:38px;width:auto;border-radius:6px}
+.brand span{font:600 19px Fraunces,Georgia,serif}
+.links{display:none;gap:4px;margin-right:12px}
+.links a{text-decoration:none;padding:8px 14px;border-radius:99px;font-weight:500}
+.links a:hover{background:var(--card)}
+.links a.act{background:var(--deep);color:var(--bg)}
+.nav .btn{min-height:40px;padding:0 14px}
+.nav .sl b{font-weight:600}
+.links.open{display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 14px 14px;margin:0;box-shadow:0 12px 24px rgba(0,0,0,.08)}
+.links.open a{padding:12px 14px}
+@media(min-width:820px){.links{display:flex}.burger{display:none}}
+.hero{background:radial-gradient(900px 420px at 80% 30%,color-mix(in srgb,var(--brass) 16%,transparent),transparent 70%)}
+.hero-in{max-width:1240px;margin:auto;padding:36px 16px 28px;display:grid;gap:28px;align-items:center}
+@media(min-width:900px){.hero-in{grid-template-columns:1.05fr 1fr;padding:64px 16px 56px;gap:48px}}
+.eyebrow{margin:0 0 10px;font:600 12px Figtree;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+.hero h1{font:600 clamp(34px,6vw,58px)/1.08 Fraunces,Georgia,serif;margin:0 0 14px;letter-spacing:-.01em}
+.lead{font-size:17px;color:var(--mute);margin:0 0 24px;max-width:520px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.btn.lg{min-height:52px;padding:0 24px;font-size:16px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.collage{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;width:100%;justify-self:center}
+.collage .tile:nth-child(even){transform:translateY(22px)}
+.tile{display:block;aspect-ratio:1;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(20,30,25,.14)}
+.tile img{width:100%;height:100%;object-fit:contain;display:block}
+.sec{padding:30px 0}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:16px}
+.sec-h h2{font:600 clamp(22px,4vw,30px) Fraunces,Georgia,serif;margin:0}
+.sec-h a{color:var(--brass);font-weight:600;text-decoration:none;white-space:nowrap}
+.cat-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:760px){.cat-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}}
+.ct{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ct .im{aspect-ratio:4/3;background:#fff}
+.ct img{width:100%;height:100%;object-fit:contain;display:block}
+.ct div.tx{padding:12px 14px}
+.ct b{display:block;font:600 16px Fraunces,Georgia,serif}
+.ct small{color:var(--mute)}
+.more2{margin:22px auto 0;display:flex;width:max-content}
+.props{display:grid;gap:18px}
+@media(min-width:760px){.props{grid-template-columns:repeat(3,1fr);gap:28px}}
+.props>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.props .ic{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--deep);color:var(--bg);font-size:18px;margin-bottom:10px}
+.props h3{font:600 18px Fraunces,Georgia,serif;margin:0 0 6px}
+.props p{margin:0;color:var(--mute)}
+.band{background:var(--deep);color:var(--bg);margin-top:20px;padding:44px 0;text-align:center}
+.band h2{font:600 clamp(24px,4vw,32px) Fraunces,Georgia,serif;margin:0 0 8px}
+.band p{margin:0 0 20px;opacity:.85}
+.band .btn{background:var(--wa);border-color:var(--wa);color:#fff}
+.foot{border-top:1px solid var(--line);padding:36px 0 22px;background:var(--card)}
+.fgrid{display:grid;gap:26px}
+@media(min-width:760px){.fgrid{grid-template-columns:1.4fr 1fr 1fr}}
+.foot h4{font:600 13px Figtree;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+.foot a{display:block;text-decoration:none;padding:5px 0}
+.foot .brand{display:flex;padding:0}
+.foot p{color:var(--mute);margin:10px 0 0}
+.copy{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:13px}
+.pv{padding-top:0}
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#"><img alt="" src="https://www.madanstore.in/cdn/shop/files/Brown_Simple_Illustration_Home_Decor_Logo_1_3c926cff-f765-4d20-9fba-9be73701b71f.png?v=1767005122&width=200"><span>Madan Store</span></a>
+    <nav class="links" id="links" aria-label="Main">
+      <a href="#" data-k="home">Home</a>
+      <a href="#shop" data-k="shop">All Products</a>
+      <a href="#g=lighting" data-k="lamps">Lamps</a>
+      <a href="https://wa.me/918178946367" target="_blank" rel="noopener">Contact</a>
+    </nav>
+    <button class="btn sl" id="slBtn" aria-label="Open shortlist">♥ <b id="slN">0</b></button>
+    <button class="btn burger" id="burger" aria-label="Menu" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<div id="land">
+  <section class="hero"><div class="hero-in">
+    <div class="hero-txt">
+      <p class="eyebrow">Lights &amp; home decor</p>
+      <h1>Light up your home with lamps you'll love</h1>
+      <p class="lead" id="lead">Browse our collection with prices upfront, shortlist your favourites and send them to us on WhatsApp.</p>
+      <div class="cta">
+        <a class="btn primary lg" href="#shop">View all products</a>
+        <a class="btn lg" id="lampBtn" href="#g=lighting">Shop lamps</a>
+      </div>
+    </div>
+    <div class="collage" id="collage"></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-h"><h2>Shop by category</h2><a href="#shop">See everything →</a></div>
+    <div class="cat-tiles" id="cattiles"></div>
+  </div></section>
+
+  <section class="sec"><div class="wrap">
+    <div class="sec-h"><h2 id="featT">Popular picks</h2><a href="#shop">View all →</a></div>
+    <div class="grid" id="feat"></div>
+    <a class="btn primary lg more2" href="#shop">View all products</a>
+  </div></section>
+
+  <section class="sec"><div class="wrap props">
+    <div><span class="ic">◐</span><h3>Everything in one place</h3><p>Every lamp and decor piece with its price visible, sorted into clear categories.</p></div>
+    <div><span class="ic">♡</span><h3>Pick your favourites</h3><p>Tap the heart on any product to build your shortlist while you browse.</p></div>
+    <div><span class="ic">✉</span><h3>Send it on WhatsApp</h3><p>Share your shortlist with us in one tap and we will take it from there.</p></div>
+  </div></section>
+
+  <section class="band"><div class="wrap">
+    <h2>Found something you like?</h2>
+    <p>Send your shortlist or ask about any lamp directly on WhatsApp.</p>
+    <a class="btn lg" href="https://wa.me/918178946367" target="_blank" rel="noopener">Chat on WhatsApp</a>
+  </div></section>
+</div>
+
+<div id="home" hidden>
+<div class="search">
+  <input id="q" type="search" placeholder="Search lamps, e.g. brass, wall, crystal" aria-label="Search products" enterkeyhint="search">
+  <select id="sort" aria-label="Sort products">
+    <option value="">Featured</option>
+    <option value="lo">Price: low to high</option>
+    <option value="hi">Price: high to low</option>
+    <option value="off">Biggest discount</option>
+  </select>
+</div>
+<nav class="cats" id="cats" aria-label="Categories"><div class="in">
+  <div class="rowc" id="row1"></div>
+  <div class="rowc sub" id="row2" hidden></div>
+</div></nav>
+
+<main>
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
+  <button class="btn more" id="more" hidden></button>
+  <div class="msg" id="msg" hidden></div>
+</main>
+
+<div class="dock" id="dock"><button class="btn primary" id="openList"></button></div>
+</div>
+<footer class="foot" id="foot"><div class="wrap fgrid">
+  <div><a class="brand" href="#"><img alt="" src="https://www.madanstore.in/cdn/shop/files/Brown_Simple_Illustration_Home_Decor_Logo_1_3c926cff-f765-4d20-9fba-9be73701b71f.png?v=1767005122&width=200"><span>Madan Store</span></a>
+    <p>Lamps and home decor for every room.</p></div>
+  <div><h4>Shop</h4><div id="footcats"><a href="#shop">All products</a></div></div>
+  <div><h4>Get in touch</h4>
+    <a href="https://wa.me/918178946367" target="_blank" rel="noopener">WhatsApp: 81789 46367</a>
+    <a href="https://www.madanstore.in" target="_blank" rel="noopener">madanstore.in</a></div>
+</div><div class="wrap copy">© <span id="yr"></span> Madan Store. All rights reserved.</div></footer>
+<div class="pv" id="pv" hidden></div>
+
+<script src="catalog-data.js"></script>
+<script>
+const STORE = { whatsapp: '918178946367', base: 'https://www.madanstore.in' };
+const PAGE = 40;
+const GROUPS = [
+  { k: 'lighting', name: 'Lamps & Lighting', re: /lamp|light|chandelier|bulb|pendant|sconce|lantern/i },
+  { k: 'decor', name: 'Decor', re: /vase|candle|votive|decor|accent|macrame|mirror|frame|clock/i },
+  { k: 'plants', name: 'Plants & Planters', re: /flower|pampas|grass|pot|planter|plant|branch|leaf|artificial/i },
+  { k: 'kitchen', name: 'Kitchen & Dining', re: /serve|drink|tableware|dinner|kitchen|dining|mug|glass|bowl|plate/i },
+  { k: 'more', name: 'More', re: /./ }
+];
+const $ = id => document.getElementById(id);
+const inr = n => 'Rs. ' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+const img = (u, w) => u ? u + (u.includes('?') ? '&' : '?') + 'width=' + w : '';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const off = p => p.compare > p.price ? Math.round((1 - p.price / p.compare) * 100) : 0;
+const wa = text => window.open(`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(text)}`, '_blank');
+
+const C = window.CATALOG;
+try { history.scrollRestoration = 'manual'; } catch (e) {}
+const T0 = document.title;
+let nav = false, homeScroll = 0;
+let picks = new Set(), S = { g: 'all', c: 'all', shown: PAGE }, cols = [], groups = [];
+try { picks = new Set(JSON.parse(localStorage.getItem('madan-picks') || '[]')); } catch (e) {}
+const save = () => { try { localStorage.setItem('madan-picks', JSON.stringify([...picks])); } catch (e) {} };
+const byId = id => C.products.find(p => p.id === id);
+
+if (!C) {
+  $('msg').hidden = false;
+  $('msg').innerHTML = 'No product data yet. Run <b>node fetch-catalog.js</b> in this folder, then reload.';
+} else init();
+
+function init() {
+  STORE.base = C.base || STORE.base;
+  cols = C.collections.filter(c => !/^(all|frontpage|home-?page)$/i.test(c.handle)).map(c => ({
+    ...c, n: C.products.filter(p => p.collections.includes(c.handle)).length,
+    g: GROUPS.find(g => g.re.test(c.title + ' ' + c.handle)).k
+  })).filter(c => c.n);
+  const gOf = new Map(cols.map(c => [c.handle, c.g]));
+  C.products.forEach(p => {
+    p.groups = new Set(p.collections.map(h => gOf.get(h)).filter(Boolean));
+    if (!p.groups.size) p.groups.add('more');
+  });
+  groups = GROUPS.map(g => ({ k: g.k, name: g.name, n: C.products.filter(p => p.groups.has(g.k)).length })).filter(g => g.n);
+
+
+  $('row1').onclick = e => { const b = e.target.closest('.chip'); if (b) setCat(b.dataset.g, 'all'); };
+  $('row2').onclick = e => { const b = e.target.closest('.chip'); if (b) setCat(S.g, b.dataset.c); };
+  $('q').oninput = () => { S.shown = PAGE; render(); };
+  $('sort').onchange = () => { S.shown = PAGE; render(); };
+  $('more').onclick = () => { S.shown += PAGE; render(); };
+  ['grid', 'feat'].forEach(id => {
+    $(id).onclick = gridClick;
+    $(id).onkeydown = e => { if (e.key === 'Enter' && e.target.classList.contains('card')) openProduct(+e.target.dataset.id); };
+  });
+  $('collage').onclick = e => { const t = e.target.closest('.tile'); if (t) { e.preventDefault(); openProduct(+t.dataset.id); } };
+  $('slBtn').onclick = () => { nav = true; location.hash = '#list'; };
+  $('burger').onclick = () => { const o = $('links').classList.toggle('open'); $('burger').setAttribute('aria-expanded', o); };
+  $('yr').textContent = new Date().getFullYear();
+  buildLanding();
+  $('openList').onclick = () => { nav = true; location.hash = '#list'; };
+  window.addEventListener('hashchange', route);
+  route(); paint();
+}
+
+function cardHTML(p) {
+  const from = p.variants.some(v => v.p !== p.price);
+  return `<div class="card" tabindex="0" data-id="${p.id}">
+    <div class="ph"><img loading="lazy" decoding="async" src="${esc(img(p.images[0], 420))}" alt="${esc(p.title)}">
+      <button class="heart" data-id="${p.id}" aria-label="Add to shortlist">♡</button>
+      ${!p.available ? '<span class="tag out">Sold out</span>' : off(p) ? `<span class="tag">${off(p)}% off</span>` : ''}</div>
+    <div class="info"><h3>${esc(p.title)}</h3>
+      <div class="price">${from ? 'From ' : ''}${inr(p.price)}${p.compare > p.price ? `<s>${inr(p.compare)}</s>` : ''}</div></div></div>`;
+}
+function gridClick(e) {
+  const card = e.target.closest('.card'); if (!card) return;
+  const id = +card.dataset.id;
+  e.target.closest('.heart') ? toggle(id) : openProduct(id);
+}
+function spread(arr, k) { return arr.length <= k ? arr : Array.from({ length: k }, (_, i) => arr[Math.floor(i * arr.length / k)]); }
+function buildLanding() {
+  const ok = C.products.filter(p => p.available && p.images.length);
+  const pool = ok.length ? ok : C.products;
+  const lamps = pool.filter(p => p.groups.has('lighting'));
+  $('collage').innerHTML = spread(lamps.length >= 4 ? lamps : pool, 4).map(p =>
+    `<a class="tile" href="#p=${esc(p.handle)}" data-id="${p.id}"><img src="${esc(img(p.images[0], 500))}" alt="${esc(p.title)}"></a>`).join('');
+  if (!groups.some(g => g.k === 'lighting')) $('lampBtn').hidden = true;
+  $('lead').textContent = `Browse ${C.products.length} lamps and decor pieces with prices upfront, shortlist your favourites and send them to us on WhatsApp.`;
+  const tiles = groups.filter(g => g.k !== 'more' || groups.length === 1);
+  $('cattiles').innerHTML = tiles.map(g => {
+    const p = pool.find(x => x.groups.has(g.k)) || C.products.find(x => x.groups.has(g.k));
+    return `<a class="ct" href="#g=${g.k}"><div class="im">${p ? `<img loading="lazy" src="${esc(img(p.images[0], 400))}" alt="">` : ''}</div>
+      <div class="tx"><b>${esc(g.name)}</b><small>${g.n} products</small></div></a>`;
+  }).join('');
+  const deals = pool.filter(p => off(p) > 0).sort((a, b) => off(b) - off(a));
+  const top = deals.length >= 4 ? deals.slice(0, 8) : spread(pool, 8);
+  $('featT').textContent = deals.length >= 4 ? 'Best offers' : 'Popular picks';
+  $('feat').innerHTML = top.map(cardHTML).join('');
+  $('footcats').innerHTML += tiles.map(g => `<a href="#g=${g.k}">${esc(g.name)}</a>`).join('');
+}
+function setActive(k) { document.querySelectorAll('#links a[data-k]').forEach(a => a.classList.toggle('act', a.dataset.k === k)); }
+
+function setCat(g, c) {
+  S.g = g; S.c = c; S.shown = PAGE; $('q').value = '';
+  try { history.replaceState(null, '', g === 'all' ? '#shop' : `#g=${g}${c !== 'all' ? '&c=' + c : ''}`); } catch (e) {}
+  drawCats(); render();
+  $('count').style.scrollMarginTop = ($('cats').offsetHeight + $('nav').offsetHeight + 8) + 'px';
+  $('count').scrollIntoView({ block: 'start' });
+}
+
+function drawCats() {
+  const chip = (attr, val, label, n, on) => `<button class="chip" ${attr}="${esc(val)}" aria-pressed="${on}">${esc(label)}<small>${n}</small></button>`;
+  $('row1').innerHTML = chip('data-g', 'all', 'All', C.products.length, S.g === 'all') +
+    groups.map(g => chip('data-g', g.k, g.name, g.n, S.g === g.k)).join('');
+  const g = groups.find(x => x.k === S.g);
+  $('row2').hidden = !g;
+  if (g) $('row2').innerHTML = chip('data-c', 'all', 'All ' + g.name, g.n, S.c === 'all') +
+    cols.filter(c => c.g === g.k).map(c => chip('data-c', c.handle, c.title, c.n, S.c === c.handle)).join('');
+  document.querySelectorAll('.rowc [aria-pressed=true]').forEach(b => b.scrollIntoView({ inline: 'center', block: 'nearest' }));
+}
+
+function list() {
+  const q = $('q').value.trim().toLowerCase();
+  let l = C.products.filter(p => q
+    ? (p.title + ' ' + p.tags.join(' ') + ' ' + p.type).toLowerCase().includes(q)
+    : (S.g === 'all' || p.groups.has(S.g)) && (S.c === 'all' || p.collections.includes(S.c)));
+  const s = $('sort').value;
+  if (s === 'lo') l.sort((a, b) => a.price - b.price);
+  else if (s === 'hi') l.sort((a, b) => b.price - a.price);
+  else if (s === 'off') l.sort((a, b) => off(b) - off(a));
+  else l.sort((a, b) => (b.available ? 1 : 0) - (a.available ? 1 : 0));
+  return { l, q };
+}
+
+function render() {
+  const { l, q } = list();
+  const g = groups.find(x => x.k === S.g), c = cols.find(x => x.handle === S.c);
+  const where = q ? `for "${q}"` : c ? 'in ' + c.title : g ? 'in ' + g.name : '';
+  $('count').textContent = `${l.length} products ${where}`.trim();
+  $('grid').innerHTML = l.slice(0, S.shown).map(cardHTML).join('');
+  $('msg').hidden = l.length > 0;
+  $('msg').textContent = 'No products found. Try another category or search.';
+  const left = l.length - S.shown;
+  $('more').hidden = left <= 0;
+  $('more').textContent = `Show more (${Math.max(left, 0)} left)`;
+  paint();
+}
+
+function toggle(id) { picks.has(id) ? picks.delete(id) : picks.add(id); save(); paint(); }
+
+function paint() {
+  document.querySelectorAll('.heart').forEach(h => {
+    const on = picks.has(+h.dataset.id);
+    h.classList.toggle('on', on); h.textContent = on ? '♥' : '♡';
+    h.setAttribute('aria-label', on ? 'Remove from shortlist' : 'Add to shortlist');
+  });
+  $('slN').textContent = picks.size;
+  const total = [...picks].reduce((a, id) => a + (byId(id) ? byId(id).price : 0), 0);
+  $('dock').style.display = picks.size ? 'block' : 'none';
+  $('openList').textContent = `View shortlist (${picks.size}) · ${inr(total)}`;
+  const pk = $('pk');
+  if (pk) { const on = picks.has(+pk.dataset.id); pk.classList.toggle('on', on); pk.textContent = on ? '♥ In shortlist' : '♡ Add to shortlist'; }
+}
+
+function openProduct(id) { nav = true; location.hash = '#p=' + byId(id).handle; }
+
+function goBack() {
+  if (nav) { nav = false; history.back(); }
+  else { try { history.replaceState(null, '', location.pathname + location.search + '#shop'); } catch (e) { location.hash = '#shop'; } route(); }
+}
+
+function route() {
+  const h = location.hash, pm = h.match(/^#p=([^&]+)/);
+  if (pm) {
+    const p = C.products.find(x => x.handle === decodeURIComponent(pm[1]));
+    if (p) { renderProduct(p); return; }
+  }
+  if (h === '#list') { renderList(); return; }
+  const was = !$('pv').hidden;
+  const m = h.match(/g=([\w-]+)(?:&c=([\w-]+))?/);
+  const shop = h === '#shop' || !!m;
+  if (m && (m[1] === 'all' || groups.some(g => g.k === m[1]))) { S.g = m[1]; S.c = m[2] || 'all'; }
+  else { S.g = 'all'; S.c = 'all'; }
+  document.body.classList.remove('pvmode');
+  $('pv').hidden = true; $('pv').innerHTML = '';
+  $('land').hidden = shop; $('home').hidden = !shop;
+  document.title = T0;
+  if (shop) { drawCats(); render(); }
+  setActive(!shop ? 'home' : S.g === 'lighting' ? 'lamps' : 'shop');
+  $('links').classList.remove('open'); $('burger').setAttribute('aria-expanded', 'false');
+  if (was) requestAnimationFrame(() => window.scrollTo(0, homeScroll)); else window.scrollTo(0, 0);
+}
+
+function showPage(html) {
+  if ($('pv').hidden) homeScroll = window.scrollY;
+  $('home').hidden = true; $('land').hidden = true; document.body.classList.add('pvmode');
+  const pv = $('pv'); pv.innerHTML = html; pv.hidden = false;
+  window.scrollTo(0, 0);
+  pv.querySelectorAll('[data-back]').forEach(b => b.onclick = goBack);
+  return pv;
+}
+
+function toast(t) {
+  const d = document.createElement('div'); d.className = 'toast'; d.textContent = t;
+  document.body.appendChild(d); setTimeout(() => d.remove(), 1800);
+}
+
+async function share(p) {
+  const url = location.href;
+  try {
+    if (navigator.share) { await navigator.share({ title: p.title, url }); return; }
+    await navigator.clipboard.writeText(url); toast('Link copied');
+  } catch (e) { if (e.name !== 'AbortError') prompt('Copy this link', url); }
+}
+
+function renderProduct(p) {
+  const n = p.images.length;
+  document.title = p.title + ' – Madan Store';
+  const pv = showPage(`
+  <div class="sh-head"><button class="btn" data-back>← Back</button><span class="ctr" id="ctr">${n > 1 ? '1 / ' + n : ''}</span><button class="btn" id="shr">Share</button></div>
+  <div class="sh-body"><div class="det"><div>
+    <div class="gal" id="gal">${p.images.map((u, i) => `<img ${i ? 'loading="lazy"' : ''} src="${esc(img(u, 900))}" alt="${esc(p.title)}">`).join('')}</div>
+    ${n > 1 ? `<div class="thumbs" id="thumbs">${p.images.map((u, i) => `<img src="${esc(img(u, 120))}" alt="Photo ${i + 1}" data-i="${i}" class="${i ? '' : 'cur'}">`).join('')}</div>` : ''}
+  </div><div class="meta">
+    <h2>${esc(p.title)}</h2>
+    <div class="price">${inr(p.price)}${p.compare > p.price ? `<s>${inr(p.compare)}</s><span class="off">${off(p)}% off</span>` : ''}</div>
+    ${p.available ? '' : '<p style="color:var(--sale);font-weight:600;margin:6px 0 0">Currently sold out</p>'}
+    ${p.variants.length ? `<table class="vars">${p.variants.map(v => `<tr><td>${esc(v.t)}</td><td>${inr(v.p)}</td><td>${v.a ? '' : 'Sold out'}</td></tr>`).join('')}</table>` : ''}
+    <pre>${esc(p.desc)}</pre></div></div></div>
+  <div class="sh-foot"><button class="btn primary" id="pk" data-id="${p.id}"></button><button class="btn wa" id="ask">Ask on WhatsApp</button></div>`);
+  const gal = $('gal');
+  gal.onscroll = () => {
+    const i = Math.round(gal.scrollLeft / gal.clientWidth);
+    if (n > 1) $('ctr').textContent = `${i + 1} / ${n}`;
+    pv.querySelectorAll('#thumbs img').forEach((t, k) => t.classList.toggle('cur', k === i));
+  };
+  if ($('thumbs')) $('thumbs').onclick = e => {
+    const t = e.target.closest('img');
+    if (t) gal.scrollTo({ left: +t.dataset.i * gal.clientWidth, behavior: 'smooth' });
+  };
+  $('pk').onclick = () => toggle(p.id);
+  $('shr').onclick = () => share(p);
+  $('ask').onclick = () => wa(`Hello Madan Store, I'm interested in:\n${p.title.slice(0, 100)} - ${inr(p.price)}\n${STORE.base}/products/${p.handle}`);
+  paint();
+}
+
+function renderList() {
+  const items = [...picks].map(byId).filter(Boolean);
+  const total = items.reduce((a, p) => a + p.price, 0);
+  document.title = 'Your shortlist – Madan Store';
+  const keep = window.scrollY, fresh = $('pv').hidden;
+  const pv = showPage(`
+  <div class="sh-head"><button class="btn" data-back>← Back</button><b>Your shortlist (${items.length})</b><span></span></div>
+  <div class="sh-body">${items.length ? `<div class="rows">${items.map(p => `<div class="row"><img src="${esc(img(p.images[0], 130))}" alt="">
+    <div><span>${esc(p.title)}</span><b>${inr(p.price)}</b></div><button class="btn" data-r="${p.id}">Remove</button></div>`).join('')}</div>
+    <div class="total"><span>Total</span><span>${inr(total)}</span></div>` : '<div class="msg">Your shortlist is empty. Tap the heart on any product to add it.</div>'}</div>
+  ${items.length ? '<div class="sh-foot"><button class="btn wa" id="send">Send shortlist on WhatsApp</button></div>' : ''}`);
+  if (!fresh) window.scrollTo(0, keep);
+  pv.onclick = e => { const r = e.target.closest('[data-r]'); if (r) { toggle(+r.dataset.r); renderList(); } };
+  if (items.length) $('send').onclick = () => {
+    const lines = items.map((p, i) => `${i + 1}. ${p.title.slice(0, 80)} - ${inr(p.price)}\n${STORE.base}/products/${p.handle}`);
+    wa(`Hello Madan Store, I like these items:\n\n${lines.join('\n\n')}\n\nTotal: ${inr(total)}`);
+  };
+}
+</script>
+</body>
+</html>
