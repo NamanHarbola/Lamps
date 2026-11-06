@@ -4,6 +4,7 @@
 const BASE = 'https://www.madanstore.in';          // products, prices, collections come from here
 const IMG_BASE = 'https://www.homesake.in';        // product images are taken from here when the product exists there
 const fs = require('fs');
+const HIDE = /^(air-conditioner|fans?|geyser)$/i;   // not part of the lamp catalogue
 const get = async u => {
   const r = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0' } });
   if (!r.ok) throw new Error(r.status + ' ' + u);
@@ -62,9 +63,10 @@ function shape(p) {
     delete p.skus;
   }
   console.log('Images taken from homesake.in for', matched, 'of', map.size, 'products');
+  for (const [id, p] of map) { p.collections = p.collections.filter(h => !HIDE.test(h)); if (!p.collections.length) map.delete(id); }
   const data = {
     base: BASE, updated: new Date().toISOString(),
-    collections: cols.map(c => ({ handle: c.handle, title: c.title, count: c.products_count })),
+    collections: cols.filter(c => !HIDE.test(c.handle)).map(c => ({ handle: c.handle, title: c.title, count: c.products_count })),
     products: [...map.values()]
   };
   fs.writeFileSync('catalog-data.js', 'window.CATALOG=' + JSON.stringify(data) + ';');
